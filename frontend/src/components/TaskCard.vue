@@ -11,7 +11,8 @@
         class="absolute top-0 left-0 w-5 h-5 border-2 border-slate-400 rounded-full flex items-center justify-center transition-all duration-300 ease-in-out"
         :class="{
           'opacity-100 bg-green-500 border-green-500': completed,
-          'opacity-0 group-hover:opacity-100': !completed,
+          'opacity-100': isCheckboxVisible && !completed,
+          'opacity-0': !isCheckboxVisible && !completed,
         }"
       >
         <input type="checkbox" class="absolute w-5 h-5 opacity-0 cursor-pointer z-10" :checked="!!completed" @click.stop="toggleComplete" />
@@ -27,8 +28,7 @@
         </svg>
       </div>
 
-      <!-- Текст -->
-      <div class="transition-all duration-300 ease-in-out mt-1" :style="{ marginLeft: completed || isHovered ? '28px' : '0px' }">
+      <div class="transition-all duration-300 ease-in-out mt-1" :style="{ marginLeft: textMarginLeft }">
         <h4 class="font-medium text-slate-900 text-sm break-words">
           {{ task.title }}
         </h4>
@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import type { Task, UserFrontend } from '@/types'
 
 const props = defineProps<{
@@ -77,6 +77,24 @@ const toggleComplete = async () => {
   emit('toggle-complete', props.task.id, completed.value)
 }
 
+const screenWidth = ref(window.innerWidth)
+
+const updateWidth = () => {
+  screenWidth.value = window.innerWidth
+}
+
+const isCheckboxVisible = computed(() => {
+  if (completed.value) return true
+  if (screenWidth.value < 640) return true
+  return isHovered.value
+})
+
+const textMarginLeft = computed(() => {
+  if (screenWidth.value >= 640) {
+    return completed.value || isHovered.value ? '28px' : '0px'
+  }
+  return '28px'
+})
 const assignedUser = computed<UserFrontend | null>(() => {
   if (!props.task.assignedUserId) return null
   return props.users.find((u) => u.id === props.task.assignedUserId) ?? null
@@ -101,4 +119,7 @@ const assigneeInitial = computed(() => {
 })
 
 const isHovered = ref(false)
+
+onMounted(() => window.addEventListener('resize', updateWidth))
+onUnmounted(() => window.removeEventListener('resize', updateWidth))
 </script>

@@ -5,7 +5,7 @@ import api from './api'
 export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
   const { data } = await api.post('/auth/login', payload, {
     headers: {
-      skipAuthInterceptor: 'true',
+      skipAuthInterceptor: true,
     },
   })
   return data
@@ -13,6 +13,6 @@ export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
 
 export const logoutApi = async () => {
   return api.post('/auth/logout', null, {
-    headers: { skipAuthInterceptor: 'true' },
+    headers: { skipAuthInterceptor: true },
   })
 }

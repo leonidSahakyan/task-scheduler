@@ -39,7 +39,6 @@ export const useUserStore = defineStore('user', {
     logout: async function () {
       try {
         await logoutApi()
-        console.log('approve')
       } catch (error) {
         console.error('Logout failed', error)
       } finally {
