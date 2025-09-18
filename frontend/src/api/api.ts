@@ -1,6 +1,4 @@
 import axios from 'axios'
-import qs from 'qs'
-import { useUserStore } from '@/stores/userStore'
 import router from '@/router'
 import { useToast, POSITION } from 'vue-toastification'
 
@@ -8,22 +6,20 @@ const toast = useToast()
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL + '/api/',
-  paramsSerializer: (params) => qs.stringify(params, { arrayFormat: 'repeat' }),
 })
 
 api.interceptors.request.use((config) => {
-  const userStore = useUserStore()
+  config.headers = config.headers || {}
 
-  if (config.headers?.['skipAuthInterceptor']) {
-    return config
-  }
-
-  if (!userStore.isLoggedIn) {
-    return Promise.reject(new axios.Cancel('User logged out'))
-  }
-
-  if (userStore.accessToken) {
-    config.headers.Authorization = `Bearer ${userStore.accessToken}`
+  // Only skip the "login/logout check" but still attach token
+  const skipCheck = config.headers['skipAuthLogoutCheck']
+  if (!skipCheck) {
+    const token = localStorage.getItem('accessToken')
+    if (token) config.headers.Authorization = `Bearer ${token}`
+  } else {
+    // For logout, still attach token if exists
+    const token = localStorage.getItem('accessToken')
+    if (token) config.headers.Authorization = `Bearer ${token}`
   }
 
   return config
@@ -32,18 +28,14 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const userStore = useUserStore()
+    if (error.config?.headers?.['skipAuthInterceptor']) return Promise.reject(error)
 
-    if (error.config?.headers?.['skipAuthInterceptor']) {
-      return Promise.reject(error)
-    }
-
-    if (!userStore.isLoggedIn) {
-      return Promise.reject(new axios.Cancel('User logged out'))
-    }
+    const token = localStorage.getItem('accessToken')
+    if (!token) return Promise.reject(new axios.Cancel('User logged out'))
 
     if (error.response?.status === 401) {
-      userStore.logout()
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('user')
       router.push('/login')
     }
 

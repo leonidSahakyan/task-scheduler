@@ -3,7 +3,6 @@ import router from '@/router'
 import type { UserFrontend, LoginPayload } from '@/types'
 import * as AuthAPI from '@/api/auth'
 import { getUsers, toggleAvailabilityApi, updatePermissionsApi } from '@/api/user'
-import { logoutApi } from '@/api/auth'
 import { socketService } from '@/services/SocketService.ts'
 import type { User } from '@/types'
 
@@ -17,7 +16,7 @@ export const useUserStore = defineStore('user', {
   }),
   actions: {
     async login(payload: LoginPayload) {
-      const res = await AuthAPI.login(payload)
+      const res = await AuthAPI.login({ ...payload })
       this.accessToken = res.access_token
 
       const userPerms = res.user.role === 'user' ? res.user.permissions || [] : []
@@ -40,9 +39,8 @@ export const useUserStore = defineStore('user', {
 
     logout: async function () {
       try {
-        await logoutApi()
-      } catch (error) {
-        console.error('Logout failed', error)
+        await AuthAPI.logoutApi()
+      } catch {
       } finally {
         socketService.disconnect()
         this.user = null
@@ -50,7 +48,6 @@ export const useUserStore = defineStore('user', {
         this.isLoggedIn = false
         localStorage.removeItem('accessToken')
         localStorage.removeItem('user')
-
         router.push('/login')
       }
     },

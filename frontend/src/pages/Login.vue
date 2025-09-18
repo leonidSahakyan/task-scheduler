@@ -63,7 +63,7 @@ const error = ref<string | null>(null)
 
 async function login() {
   try {
-    const role = await userStore.login(form)
+    const role = await userStore.login({ ...form })
     if (role === 'admin') router.push('/boards')
     else router.push('/dashboard')
   } catch (e) {
