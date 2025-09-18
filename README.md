@@ -46,7 +46,7 @@ cd task-scheduler
 Build and start containers (only first time):
 
 ```bash
-docker-compose up --build
+docker-compose --profile migrate up --build
 ```
 
 Next time, you can just run:

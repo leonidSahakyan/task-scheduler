@@ -1,23 +1,22 @@
 import axios from 'axios'
 import router from '@/router'
+import qs from 'qs'
 import { useToast, POSITION } from 'vue-toastification'
 
 const toast = useToast()
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL + '/api/',
+  paramsSerializer: (params) => qs.stringify(params, { arrayFormat: 'repeat' }),
 })
 
 api.interceptors.request.use((config) => {
   config.headers = config.headers || {}
-
-  // Only skip the "login/logout check" but still attach token
   const skipCheck = config.headers['skipAuthLogoutCheck']
   if (!skipCheck) {
     const token = localStorage.getItem('accessToken')
     if (token) config.headers.Authorization = `Bearer ${token}`
   } else {
-    // For logout, still attach token if exists
     const token = localStorage.getItem('accessToken')
     if (token) config.headers.Authorization = `Bearer ${token}`
   }

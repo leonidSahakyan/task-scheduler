@@ -15,7 +15,7 @@ export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
 export const logoutApi = async () => {
   return api.post('/auth/logout', null, {
     headers: {
-      skipAuthLogoutCheck: true, // new flag
+      skipAuthLogoutCheck: true,
     },
   })
 }

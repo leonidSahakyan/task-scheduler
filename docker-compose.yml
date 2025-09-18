@@ -13,10 +13,22 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "mysql"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"] # Исправь на localhost
       interval: 5s
       retries: 5
       timeout: 5s
+
+  backend-migrate:
+    build: ./backend
+    container_name: backend-migrate
+    restart: "no"
+    env_file:
+      - ./backend/.env
+    command: ["npm", "run", "deploy:prod"]
+    depends_on:
+      mysql:
+        condition: service_healthy
+    profiles: ["migrate"]
 
   backend:
     build: ./backend

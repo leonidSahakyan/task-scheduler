@@ -25,7 +25,7 @@
     "seed:prod": "node dist/seeders/index.js",
     "migration:run:prod": "npx typeorm migration:run -d dist/data-source.js",
     "migration:revert:prod": "npx typeorm migration:revert -d dist/data-source.js",
-    "deploy:prod": "npm run migration:run:prod && npm run seed:prod && npm run start:prod"
+    "deploy:prod": "npm run migration:run:prod && npm run seed:prod"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
