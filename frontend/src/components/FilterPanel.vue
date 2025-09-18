@@ -1,5 +1,9 @@
 <template>
-  <div class="absolute bg-white shadow-lg rounded-lg border border-slate-300 w-80 z-50 filter" v-show="visible" :style="style">
+  <div
+    class="absolute bg-white shadow-lg rounded-lg border border-slate-300 z-50 filter w-full sm:w-80 max-h-[80vh] overflow-y-auto"
+    v-show="visible"
+    :style="style"
+  >
     <div class="p-4 border-b border-slate-200 flex items-center justify-between">
       <h3 class="text-sm font-semibold text-slate-900">Filters</h3>
       <button @click="$emit('close')" class="text-slate-400 hover:text-slate-600 cursor-pointer">
