@@ -1,7 +1,7 @@
 
 # Task Scheduler
 
-A full-featured task management backend built with **NestJS**, **TypeORM**, **MySQL**, and **Socket.IO** for real-time updates. This backend supports user roles, task management, and real-time synchronization across all connected clients.
+A full-featured task management application built with **NestJS**, **MySQL**, and **Socket.IO** for real-time updates on the backend, and **Vue.js** with **TypeScript** on the frontend. The system supports user roles, task management, advanced filtering, drag & drop ordering, and real-time synchronization across all connected clients.
 
 ## 🌟 Features
 
@@ -12,8 +12,7 @@ A full-featured task management backend built with **NestJS**, **TypeORM**, **My
   - Task ordering and column ordering (drag & drop)
   - Every user sees updates instantly as other users make changes
 - Advanced filtering by assignee, date, status, etc.
-- Real-time notifications for task changes using Socket.IO
-- Fully interactive dashboard
+- Real-time notifications
 - Data seeding and migrations for initial setup
 - Dockerized setup for easy deployment
 
