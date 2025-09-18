@@ -13,20 +13,34 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const userStore = useUserStore()
+
+  if (config.headers?.['skipAuthInterceptor']) {
+    return config
+  }
+
+  if (!userStore.isLoggedIn) {
+    return Promise.reject(new axios.Cancel('User logged out'))
+  }
+
   if (userStore.accessToken) {
     config.headers.Authorization = `Bearer ${userStore.accessToken}`
   }
+
   return config
 })
 
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    const userStore = useUserStore()
+
     if (error.config?.headers?.['skipAuthInterceptor']) {
       return Promise.reject(error)
     }
 
-    const userStore = useUserStore()
+    if (!userStore.isLoggedIn) {
+      return Promise.reject(new axios.Cancel('User logged out'))
+    }
 
     if (error.response?.status === 401) {
       userStore.logout()

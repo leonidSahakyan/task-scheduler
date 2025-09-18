@@ -13,6 +13,7 @@ export const useUserStore = defineStore('user', {
     accessToken: '' as string,
     users: [] as UserFrontend[],
     allPermissions: ['see_other_tasks'],
+    isLoggedIn: false,
   }),
   actions: {
     async login(payload: LoginPayload) {
@@ -28,6 +29,7 @@ export const useUserStore = defineStore('user', {
         permissionsChecked: this.allPermissions.map((p) => userPerms.includes(p)),
       }
 
+      this.isLoggedIn = true
       socketService.connect(this.accessToken)
 
       localStorage.setItem('accessToken', this.accessToken)
@@ -45,6 +47,7 @@ export const useUserStore = defineStore('user', {
         socketService.disconnect()
         this.user = null
         this.accessToken = ''
+        this.isLoggedIn = false
         localStorage.removeItem('accessToken')
         localStorage.removeItem('user')
 
